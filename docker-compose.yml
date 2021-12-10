@@ -1,0 +1,29 @@
+version: '3'
+services:
+    postgresql:
+        image: postgres:latest
+        container_name: "postgresql"
+        ports:
+            - 5432:5432
+        environment: 
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=postgres
+            - SCHEMA=public
+        volumes:
+            - ./sql/ddl/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
+    api:
+        build: .
+        container_name: "users-micro"
+        ports:
+            - "8080:8080"
+        environment: 
+            - APPLICATION_PORT=:8080
+            - DB_HOST=postgresql
+            - DB_PORT=5432
+            - DB_USER=postgres
+            - DB_PASSWORD=postgres
+            - DBNAME=postgres
+            - SCHEMA=public
+        depends_on: 
+            - postgresql
